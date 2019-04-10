@@ -23,6 +23,14 @@ const wss = new SocketServer({ server });
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
 
+  ws.on('message', function incoming(message) {
+    let incomingMessage = JSON.parse(message)
+
+    console.log(`User: ${incomingMessage.username} said: ${incomingMessage.content}`);
+
+  });
+
+
 
 
   console.log('Client connected');
