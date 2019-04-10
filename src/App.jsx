@@ -2,14 +2,9 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessagesList from './MessageList.jsx';
 import uuid from "uuid";
+import { IncomingMessage } from 'http';
 
-const handleOnOpen = event => {
-  console.log('client connected ');
-}
 
-const handleOnError = event => {
-  console.log('Error Connecting to server');
-}
 
 class App extends Component {
 
@@ -17,57 +12,67 @@ class App extends Component {
     super(props);
 
     this.state = {
-      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id: uuid(),
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          id: uuid(),
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: {name: 'Bobby'},                   // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: []
     }
-  }
+  };
+
+
+
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: messages})
-    }, 3000);
 
     const socketUrl = 'ws://localhost:3001';
+    this.socket = new WebSocket(socketUrl);
 
-    const socket = new WebSocket(socketUrl);
+    this.socket.onopen = event => {
+       // console.log('client connected ');
+      // this.socket.send(onChatbarSubmit)
+    }
 
-    socket.onopen = handleOnOpen;                      // set it to a function then outside the class create the f() you could have also set the function after the "=" .
-    socket.onerror = handleOnError;
+
+    //---
+
+    // the below is what happens with MSG from server
+    this.socket.onmessage = event => {
+      const incomingMessage = JSON.parse(event.data);
+
+      switch(incomingMessage.type) {
+        case 'incomingClientInfo':
+         console.log(incomingMessage);
+         break;
+          // later ex. will want to add other case: 'notification'
+         default:
+         console.log('unknown type of message')
+      }
+    };
+
+    //---
+
+    // Below is what happens with Errors (note needed for the project)
+    this.socket.onerror = event => {
+      console.log('Error Connecting to server');
+    }
+    //---
   }
 
 
+  onChatbarSubmit = (content) => {                 // the newMsg is now a str of the msg
 
-  onChatbarSubmit = (newMessage) => {                 // the newMsg is now a str of the msg
-
-    const StructureMessage =
-    {
+    const newMessage ={
       id: uuid(),                                     // this should  be uuid() each msg should have a unique #
       username: this.state.currentUser.name,
-      content: newMessage,
+      content: content,
     }
 
     const oldMessages = this.state.messages
-    this.setState({messages: [...oldMessages, StructureMessage] })
+    this.setState({messages: [...oldMessages, newMessage] })
+    this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
+
+
 
   };
+
 
 
 
