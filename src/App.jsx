@@ -3,7 +3,13 @@ import ChatBar from './ChatBar.jsx';
 import MessagesList from './MessageList.jsx';
 import uuid from "uuid";
 
+const handleOnOpen = event => {
+  console.log('client connected ');
+}
 
+const handleOnError = event => {
+  console.log('Error Connecting to server');
+}
 
 class App extends Component {
 
@@ -38,6 +44,13 @@ class App extends Component {
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({messages: messages})
     }, 3000);
+
+    const socketUrl = 'ws://localhost:3001';
+
+    const socket = new WebSocket(socketUrl);
+
+    socket.onopen = handleOnOpen;                      // set it to a function then outside the class create the f() you could have also set the function after the "=" .
+    socket.onerror = handleOnError;
   }
 
 
