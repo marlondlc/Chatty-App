@@ -71,6 +71,13 @@ class App extends Component {
 
   };
 
+  currentUser = () => {
+    const newName = {
+      username: this.state.currentUser.name
+    }
+    this.socket.send(JSON.stringify(newName))
+  };
+
   render() {
     return (
     <div>
