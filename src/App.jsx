@@ -3,10 +3,6 @@ import ChatBar from './ChatBar.jsx';
 import MessagesList from './MessageList.jsx';
 
 
-
-
-
-
 class App extends Component {
 
   constructor(props) {
@@ -25,8 +21,8 @@ class App extends Component {
     this.socket = new WebSocket(socketUrl);
 
     this.socket.onopen = event => {
-       // console.log('client connected ');
-      // this.socket.send(onChatbarSubmit)
+      console.log('client connected ');
+    // this.socket.send(onChatbarSubmit)
     }
 
     //---
@@ -71,12 +67,15 @@ class App extends Component {
 
   };
 
-  currentUser = () => {
-    const newName = {
-      username: this.state.currentUser.name
-    }
-    this.socket.send(JSON.stringify(newName))
-  };
+
+  updateCurrentUser = (username) => {
+
+    // CREATe A NOTIFICATION MSG (NEXT STEP W6D4)
+    //  send notification MSG to WS server:
+
+    //update current user in the state
+    this.setState({currentUser: {name: username}})            // keep the same structure from the state (above).
+  }
 
   render() {
     return (
@@ -86,8 +85,8 @@ class App extends Component {
       </nav>
       {/**  the below line is refering to MessageList.jsx using "import" above*/}
       <MessagesList messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
-      {/**  the below line is refering to ChatBar.jsx /and/ sned it props "currentUser"*/}
-      <ChatBar currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
+      {/**  the below line is refering to ChatBar.jsx /and/ sends it props "currentUser"*/}
+      <ChatBar updateCurrentUser={this.updateCurrentUser} currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
 
     </div>
     );
