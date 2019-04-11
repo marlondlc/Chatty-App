@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessagesList from './MessageList.jsx';
-import uuid from "uuid";
-import { IncomingMessage } from 'http';
+
+
+
 
 
 
@@ -18,8 +19,6 @@ class App extends Component {
   };
 
 
-
-
   componentDidMount() {
 
     const socketUrl = 'ws://localhost:3001';
@@ -30,21 +29,22 @@ class App extends Component {
       // this.socket.send(onChatbarSubmit)
     }
 
-
     //---
 
     // the below is what happens with MSG from server
     this.socket.onmessage = event => {
       const incomingMessage = JSON.parse(event.data);
+      const oldMessages = this.state.messages
+      this.setState({messages: [...oldMessages, incomingMessage] })
 
-      switch(incomingMessage.type) {
-        case 'incomingClientInfo':
-         console.log(incomingMessage);
-         break;
-          // later ex. will want to add other case: 'notification'
-         default:
-         console.log('unknown type of message')
-      }
+      // switch(incomingMessage.type) {
+      //   case 'incomingClientInfo':
+      //    console.log(incomingMessage);
+      //    break;
+      //     // later ex. will want to add other case: 'notification'
+      //    default:
+      //    console.log('unknown type of message')
+      // }
     };
 
     //---
@@ -60,27 +60,21 @@ class App extends Component {
   onChatbarSubmit = (content) => {                 // the newMsg is now a str of the msg
 
     const newMessage ={
-      id: uuid(),                                     // this should  be uuid() each msg should have a unique #
+
       username: this.state.currentUser.name,
       content: content,
     }
 
-    const oldMessages = this.state.messages
-    this.setState({messages: [...oldMessages, newMessage] })
-    this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
 
+    this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
 
 
   };
 
-
-
-
-
   render() {
     return (
     <div>
-      <nav className="navbar">
+   <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
       </nav>
       {/**  the below line is refering to MessageList.jsx using "import" above*/}
