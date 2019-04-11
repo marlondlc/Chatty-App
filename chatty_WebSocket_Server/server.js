@@ -25,16 +25,21 @@ wss.on('connection', (ws) => {
 
   ws.on('message', function incoming(message) {
     let incomingMessage = JSON.parse(message)
+    wss.clients.forEach(function each(client) {
 
-    console.log(`User: ${incomingMessage.username} said: ${incomingMessage.content}`);
+      incomingMessage['id'] = uuidv4()
+      client.send(JSON.stringify(incomingMessage)); //getting ID/user/content
 
+      console.log(`User: ${incomingMessage.username} said: ${incomingMessage.content}`);
+
+    });
+
+
+
+
+    console.log('Client connected');
+
+    // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+    ws.on('close', () => console.log('Client disconnected'));
   });
-
-
-
-
-  console.log('Client connected');
-
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
-});
+})
