@@ -10,7 +10,10 @@ class ChatBar extends Component {
   }
 
   userNameHandler = (event) => {
-    this.setState({username: event.target.value})
+    if(event.key === "Enter"){
+      this.props.onUserNameChange(this.state.message)
+      // this.setState({username: event.target.value})  // this line i might need to clear it the same way i did in "onSubmitHandler"
+    }
   }
 
   messageHandler = (event) => {
