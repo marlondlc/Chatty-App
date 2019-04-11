@@ -1,9 +1,9 @@
 h1 {
-  color: springgreen;
+  color: #0D2C54
 }
 
 body {
-  background: white;
+  background: #93827F;
   color: black;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
@@ -11,7 +11,7 @@ body {
 }
 
 .chatbar {
-  background: springgreen;
+  background: #0D2C54;
   border-top: 1px solid black;
   bottom: 0;
   display: flex;
@@ -54,10 +54,14 @@ body {
   overflow: hidden;
   margin: 5px;
   padding: 0 10px;
+
+
 }
 
 .message-content {
   flex: 8;
+  background-color: #8DA9C4;
+  border-radius: 0px 1em 1em 1em;
 }
 
 .message-username {
@@ -66,7 +70,7 @@ body {
 }
 
 .navbar {
-  background: springgreen;
+  background: #0D2C54;
   border-bottom: 1px solid black;
   height: 60px;
   left: 0;
@@ -77,13 +81,15 @@ body {
 }
 
 .navbar-brand {
-  color: inherit;
+  color: #C5C5C5;
   display: block;
   float: left;
   font-weight: 700;
   font-size: 28px;
+  font-style: italic;
   height: 60px;
   line-height: 60px;
   padding: 0 10px;
   text-decoration: none;
+
 }
