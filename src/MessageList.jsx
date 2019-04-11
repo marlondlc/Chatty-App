@@ -12,6 +12,7 @@ class MessageList extends Component {
                         key={message.id}/> /** every msg must have a key */
            )}
       </main>
+
     )
   }
 }
