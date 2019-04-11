@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      currentUser: {name: 'Bobby'},                   // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: 'Anonymous'},                   // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     }
   };
@@ -33,14 +33,19 @@ class App extends Component {
       const oldMessages = this.state.messages
       this.setState({messages: [...oldMessages, incomingMessage] })
 
-      // switch(incomingMessage.type) {
-      //   case 'incomingClientInfo':
-      //    console.log(incomingMessage);
-      //    break;
-      //     // later ex. will want to add other case: 'notification'
-      //    default:
-      //    console.log('unknown type of message')
-      // }
+      switch(incomingMessage.type) {
+        case 'incomingMessage':
+        console.log(incomingMessage);
+        break;
+
+        case 'incomingNotification':
+        console.log(incomingMessage)
+        break;
+
+        default:
+        // show an error in the console if the message type is unknown
+        throw new Error("Unknown event type " + JSON.stringify(incomingMessage));
+      }
     };
 
     //---
@@ -54,13 +59,11 @@ class App extends Component {
 
 
   onChatbarSubmit = (content) => {                 // the newMsg is now a str of the msg
-
+    //create a new MSG:
     const newMessage ={
-
       username: this.state.currentUser.name,
       content: content,
-    }
-
+    };
 
     this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
 
@@ -68,14 +71,24 @@ class App extends Component {
   };
 
 
-  updateCurrentUser = (username) => {
+  updateCurrentUser = (newUserName) => {
 
-    // CREATe A NOTIFICATION MSG (NEXT STEP W6D4)
-    //  send notification MSG to WS server:
+    //create a notification MSG (NEXT STEP W6D4)
+    const notification = {
+      content: `** ${this.state.currentUser.name} has changed their name to ${newUserName}.**`,
+      type: "postNotification",
+    };
+    //THIS MIGHT HAVE TO BE IN THE "messegeList" as HTML.
 
     //update current user in the state
-    this.setState({currentUser: {name: username}})            // keep the same structure from the state (above).
+    this.setState({currentUser: {name: newUserName}})            // keep the same structure from the state (above).
+
+    //  send notification MSG to WS server:
+
+    this.socket.send(JSON.stringify(notification));
   }
+
+
 
   render() {
     return (
