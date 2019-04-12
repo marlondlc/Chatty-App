@@ -63,6 +63,7 @@ class App extends Component {
     const newMessage ={
       username: this.state.currentUser.name,
       content: content,
+      type: 'postMessage',                         // this server is listening  for "postmessage" to then handle it and change the type to "incomingMessage" => broadcasted to all users in the chat
     };
 
     this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
@@ -97,7 +98,7 @@ class App extends Component {
         <a href="/" className="navbar-brand">Chatty</a>
       </nav>
       {/**  the below line is refering to MessageList.jsx using "import" above*/}
-      <MessagesList messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
+      <MessagesList username={this.state.currentUser.name} messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
       {/**  the below line is refering to ChatBar.jsx /and/ sends it props "currentUser"*/}
       <ChatBar updateCurrentUser={this.updateCurrentUser} currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
 
