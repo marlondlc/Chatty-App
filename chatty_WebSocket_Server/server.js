@@ -29,30 +29,26 @@ wss.on("connection", ws => {
     wss.clients.forEach(function each(client) {
       incomingMessage["id"] = uuidv4();
 
-      client.send(JSON.stringify(incomingMessage)); //getting ID/user/content
-
       console.log(
         `User: ${incomingMessage.username} said: ${incomingMessage.content}`
       );
-    });
 
-    wss.clients.forEach(function each(client) {
-      //client no being used!!!!!!!
-      // the above code is broadcasting the MSG to all Users in the chat
       switch (incomingMessage.type) {
         case "postMessage":
           incomingMessage["type"] = "incomingMessage";
+          client.send(JSON.stringify(incomingMessage));
           break;
 
         case "postNotification":
           incomingMessage["type"] = "incomingNotification";
+          client.send(JSON.stringify(incomingMessage));
           break;
 
         default:
           // show an error in the console if the message type is unknown
+          client.send(JSON.stringify(incomingMessage));
           throw new Error(
-            "Unknown event type " +
-              client.send(JSON.stringify(incomingMessage.type))
+            "Unknown event type " + incomingMessage.type //getting ID/user/content)
           );
       }
     });
