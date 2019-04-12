@@ -12,7 +12,7 @@ class MessageList extends Component {
       if(message.type == 'incomingMessage') {
         return <Message  content={message.content}
                   username={message.username}
-                  key={message.id}/> /** every msg must have a key */
+                  key={message.id}/>
     } else {
         return <Notification  content={message.content}
         key={message.id}/>
