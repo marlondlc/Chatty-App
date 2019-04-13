@@ -22,16 +22,19 @@ class App extends Component {
 
     this.socket.onopen = event => {
       console.log('client connected ');
-    // this.socket.send(onChatbarSubmit)
+    // this.socket.send(onChatbarSubmit) - CLEANED!!
     }
 
     //---
 
     // the below is what happens with MSG from server
     this.socket.onmessage = event => {
+
       const incomingMessage = JSON.parse(event.data);
+
       const oldMessages = this.state.messages
       this.setState({messages: [...oldMessages, incomingMessage] })
+
 
       switch(incomingMessage.type) {
         case 'incomingMessage':
@@ -79,7 +82,7 @@ class App extends Component {
       content: `** ${this.state.currentUser.name} has changed their name to ${newUserName}.**`,
       type: "postNotification",
     };
-    //THIS MIGHT HAVE TO BE IN THE "messegeList" as HTML.
+
 
     //update current user in the state
     this.setState({currentUser: {name: newUserName}})            // keep the same structure from the state (above).

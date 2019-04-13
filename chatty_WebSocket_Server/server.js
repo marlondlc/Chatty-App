@@ -20,42 +20,50 @@ const server = express()
 const wss = new SocketServer({ server });
 //END
 
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    //if (client.readyState === SocketServer.OPEN) {
+    client.send(data);
+    //}
+  });
+};
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on("connection", ws => {
   ws.on("message", function incoming(message) {
     let incomingMessage = JSON.parse(message);
-    wss.clients.forEach(function each(client) {
-      incomingMessage["id"] = uuidv4();
+    incomingMessage["id"] = uuidv4();
+    // console.log(
+    //   `User: ${incomingMessage.username} said: ${incomingMessage.content}`
+    // );
 
-      console.log(
-        `User: ${incomingMessage.username} said: ${incomingMessage.content}`
-      );
+    switch (incomingMessage.type) {
+      case "postMessage":
+        incomingMessage["type"] = "incomingMessage";
+        wss.broadcast(JSON.stringify(incomingMessage));
 
-      switch (incomingMessage.type) {
-        case "postMessage":
-          incomingMessage["type"] = "incomingMessage";
-          client.send(JSON.stringify(incomingMessage));
-          break;
+        break;
 
-        case "postNotification":
-          incomingMessage["type"] = "incomingNotification";
-          client.send(JSON.stringify(incomingMessage));
-          break;
+      case "postNotification":
+        incomingMessage["type"] = "incomingNotification";
+        wss.broadcast(JSON.stringify(incomingMessage));
+        break;
 
-        default:
-          // show an error in the console if the message type is unknown
-          client.send(JSON.stringify(incomingMessage));
-          throw new Error(
-            "Unknown event type " + incomingMessage.type //getting ID/user/content)
-          );
-      }
-    });
+      default:
+        // show an error in the console if the message type is unknown
+        // client.send(JSON.stringify(incomingMessage));
+        throw new Error(
+          "Unknown event type " + JSON.stringify(incomingMessage)
+        );
+    }
 
     console.log("Client connected");
 
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-    ws.on("close", () => console.log("Client disconnected"));
+    ws.on("close", () => {
+      console.log("Client disconnected");
+    });
   });
 });

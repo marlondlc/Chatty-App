@@ -4,11 +4,10 @@ import Notification from './Notification.jsx';
 
 class MessageList extends Component {
 
-
   render() {
 
-
     let messageList = this.props.messages.map(message => {
+
       if(message.type == 'incomingMessage') {
         return <Message  content={message.content}
                   username={message.username}
@@ -16,11 +15,8 @@ class MessageList extends Component {
     } else {
         return <Notification  content={message.content}
         key={message.id}/>
-    }
+      }
     })
-
-
-
 
     return (
       <div>
