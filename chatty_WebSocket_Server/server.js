@@ -28,27 +28,39 @@ wss.broadcast = function broadcast(data) {
   });
 };
 
+const onlineUsers = {
+  // this is create an obj and sending the data to the client side  under nbUsers
+  nbUsers: 0,
+  type: "nbUsers"
+};
+
+// if im sending an obj you need to "JSON.Stringify"
+// if you are sending a specific piece of data "onlineUSers.nbUser" (which is just an intiger) no need to stingify because its not an obj.
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on("connection", ws => {
+  onlineUsers.nbUsers = wss.clients.size;
+  wss.broadcast(JSON.stringify(onlineUsers));
+
   ws.on("message", function incoming(message) {
-    let incomingMessage = JSON.parse(message);
-    incomingMessage["id"] = uuidv4();
+    let clientMessage = JSON.parse(message);
+    clientMessage["id"] = uuidv4();
     // console.log(
-    //   `User: ${incomingMessage.username} said: ${incomingMessage.content}`
+    //   `User: ${clientMessage.username} said: ${clientMessage.content}`
     // );
 
-    switch (incomingMessage.type) {
+    switch (clientMessage.type) {
       case "postMessage":
-        incomingMessage["type"] = "incomingMessage";
-        wss.broadcast(JSON.stringify(incomingMessage));
+        clientMessage["type"] = "incomingMessage";
+        wss.broadcast(JSON.stringify(clientMessage));
 
         break;
 
       case "postNotification":
-        incomingMessage["type"] = "incomingNotification";
-        wss.broadcast(JSON.stringify(incomingMessage));
+        clientMessage["type"] = "incomingNotification";
+        wss.broadcast(JSON.stringify(clientMessage));
         break;
 
       default:
@@ -62,8 +74,18 @@ wss.on("connection", ws => {
     console.log("Client connected");
 
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-    ws.on("close", () => {
-      console.log("Client disconnected");
-    });
+    wss.broadcast(
+      JSON.stringify({
+        // this is create an obj and sending the data to the client side  under nbUsers
+        nbUsers: wss.clients.size,
+        type: "nbUsers"
+      })
+    );
+  });
+
+  ws.on("close", () => {
+    console.log("client disconnected");
+    onlineUsers.nbUsers = wss.clients.size;
+    wss.broadcast(JSON.stringify(onlineUsers));
   });
 });
