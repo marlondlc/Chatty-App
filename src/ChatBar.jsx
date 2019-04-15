@@ -12,24 +12,18 @@ class ChatBar extends Component {
   userNameHandler = (event) => {
     const newName = event.target.value;
     this.setState({username: newName})         // resets the username to the what was entered
-    console.log('this is the name field:',newName)
   }
 
   onUserNameSubmit = (event) => {
-
-    if(event.key === "Enter") {
-    this.props.updateCurrentUser(this.state.username)           // triggereing a f()  thats defined in the app
-    this.setState({username: ''})
+    if (event.key === "Enter") {
+      this.props.updateCurrentUser(this.state.username)           // triggereing a f()  thats defined in the app
+      this.setState({username: ''})
     }
-
-
   }
-
 
   messageHandler = (event) => {
     const message = event.target.value;
     this.setState({message: message})
-
   }
 
   onSubmitHandler = (event) => {
@@ -39,8 +33,6 @@ class ChatBar extends Component {
     }
   }
 
-
-
   render(){
     return (
       <footer className="chatbar">
@@ -49,7 +41,6 @@ class ChatBar extends Component {
       </footer>
     )
   }
-
 }
 
 export default ChatBar;
