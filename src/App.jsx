@@ -10,7 +10,9 @@ class App extends Component {
 
     this.state = {
       currentUser: {name: 'Anonymous'},                   // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      messages: [],
+      notifications: [],
+      counter: 0
     }
   };
 
@@ -21,8 +23,7 @@ class App extends Component {
     this.socket = new WebSocket(socketUrl);
 
     this.socket.onopen = event => {
-      console.log('client connected ');
-    // this.socket.send(onChatbarSubmit) - CLEANED!!
+      console.log('Client connected');
     }
 
     //---
@@ -30,20 +31,21 @@ class App extends Component {
     // the below is what happens with MSG from server
     this.socket.onmessage = event => {
 
-      const incomingMessage = JSON.parse(event.data);
+      const serverData = JSON.parse(event.data);
 
-      const oldMessages = this.state.messages
-      this.setState({messages: [...oldMessages, incomingMessage] })
-
-
-      switch(incomingMessage.type) {
+      switch(serverData.type) {
         case 'incomingMessage':
-        console.log(incomingMessage);
+        this.setState({messages: [...this.state.messages, serverData] })
         break;
 
         case 'incomingNotification':
-        console.log(incomingMessage)
+        this.setState({messages: [...this.state.messages, serverData] })
         break;
+
+        case 'nbUsers':
+        this.setState({counter: serverData.nbUsers});
+        break;
+
 
         default:
         // show an error in the console if the message type is unknown
@@ -87,8 +89,7 @@ class App extends Component {
     //update current user in the state
     this.setState({currentUser: {name: newUserName}})            // keep the same structure from the state (above).
 
-    //  send notification MSG to WS server:
-
+    //  send notification MSG to WS server
     this.socket.send(JSON.stringify(notification));
   }
 
@@ -99,9 +100,10 @@ class App extends Component {
     <div>
    <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
+        <div className="usersOnline">{this.state.counter} Users online</div>
       </nav>
       {/**  the below line is refering to MessageList.jsx using "import" above*/}
-      <MessagesList username={this.state.currentUser.name} messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
+      <MessagesList messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
       {/**  the below line is refering to ChatBar.jsx /and/ sends it props "currentUser"*/}
       <ChatBar updateCurrentUser={this.updateCurrentUser} currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
 
