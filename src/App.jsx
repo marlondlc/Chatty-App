@@ -9,13 +9,12 @@ class App extends Component {
     super(props);
 
     this.state = {
-      currentUser: {name: 'Anonymous'},                   // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: 'Anonymous'},               // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [],
       notifications: [],
       counter: 0
     }
   };
-
 
   componentDidMount() {
 
@@ -25,8 +24,6 @@ class App extends Component {
     this.socket.onopen = event => {
       console.log('Client connected');
     }
-
-    //---
 
     // the below is what happens with MSG from server
     this.socket.onmessage = event => {
@@ -46,22 +43,16 @@ class App extends Component {
         this.setState({counter: serverData.nbUsers});
         break;
 
-
         default:
-        // show an error in the console if the message type is unknown
         throw new Error("Unknown event type " + JSON.stringify(incomingMessage));
       }
     };
-
-    //---
 
     // Below is what happens with Errors (note needed for the project)
     this.socket.onerror = event => {
       console.log('Error Connecting to server');
     }
-    //---
   }
-
 
   onChatbarSubmit = (content) => {                 // the newMsg is now a str of the msg
     //create a new MSG:
@@ -72,19 +63,14 @@ class App extends Component {
     };
 
     this.socket.send(JSON.stringify(newMessage))    // this is communicating with the WS server
-
-
   };
 
-
   updateCurrentUser = (newUserName) => {
-
     //create a notification MSG (NEXT STEP W6D4)
     const notification = {
       content: `** ${this.state.currentUser.name} has changed their name to ${newUserName}.**`,
       type: "postNotification",
     };
-
 
     //update current user in the state
     this.setState({currentUser: {name: newUserName}})            // keep the same structure from the state (above).
@@ -93,26 +79,20 @@ class App extends Component {
     this.socket.send(JSON.stringify(notification));
   }
 
-
-
   render() {
     return (
-    <div>
-   <nav className="navbar">
-        <a href="/" className="navbar-brand">Chatty</a>
-        <div className="usersOnline">{this.state.counter} Users online</div>
-      </nav>
-      {/**  the below line is refering to MessageList.jsx using "import" above*/}
-      <MessagesList messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
-      {/**  the below line is refering to ChatBar.jsx /and/ sends it props "currentUser"*/}
-      <ChatBar updateCurrentUser={this.updateCurrentUser} currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
-
-    </div>
+      <div>
+        <nav className="navbar">
+          <a href="/" className="navbar-brand">Chatty</a>
+          <div className="usersOnline">{this.state.counter} Users online</div>
+        </nav>
+        {/**  the below line is refering to MessageList.jsx using "import" above*/}
+        <MessagesList messages={this.state.messages} submitEvent={this.onChatbarMessageSubmit}/>
+        {/**  the below line is refering to ChatBar.jsx /and/ sends it props "currentUser"*/}
+        <ChatBar updateCurrentUser={this.updateCurrentUser} currentUser={this.state.currentUser} onChatbarSubmit={this.onChatbarSubmit}/>
+      </div>
     );
   }
-
-
-
 }
 
 export default App;

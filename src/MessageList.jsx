@@ -10,20 +10,19 @@ class MessageList extends Component {
 
       if(message.type == 'incomingMessage') {
         return <Message  content={message.content}
-                  username={message.username}
-                  key={message.id}/>
-    } else {
+                         username={message.username}
+                         key={message.id}
+                />
+      } else {
         return <Notification  content={message.content}
-        key={message.id}/>
+                              key={message.id}/>
       }
     })
 
     return (
       <div>
-      <p>{this.props.username}</p>
-        <main className="messages">
-        {messageList}
-        </main>
+        <p>{this.props.username}</p>
+        <main className="messages">{messageList}</main>
       </div>
 
     )

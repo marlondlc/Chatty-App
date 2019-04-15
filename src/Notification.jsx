@@ -16,19 +16,4 @@ class Notification extends Component {
   }
 }
 
-
-/**
-above should be written as a f(): EXAMPLE // because stateless
-
-function chartBar(props){
-  return (
-    <footer>
-      <input class="chatbar-username" placeholder="Your Name (Optional)" />
-      <input class="chatbar-message" placeholder="Type a message and hit ENTER" />
-    </footer>
-  );
-}
-
-*/
-
 export default Notification;

@@ -8,8 +8,6 @@ const PORT = 3001;
 
 // Create a new express server
 const server = express()
-  //END
-
   // Make the express server serve static assets (html, javascript, css) from the /public folder
   .use(express.static("public"))
   .listen(PORT, "0.0.0.0", "localhost", () =>
@@ -18,13 +16,10 @@ const server = express()
 
 // Create the WebSockets server
 const wss = new SocketServer({ server });
-//END
 
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
-    //if (client.readyState === SocketServer.OPEN) {
     client.send(data);
-    //}
   });
 };
 
@@ -47,15 +42,11 @@ wss.on("connection", ws => {
   ws.on("message", function incoming(message) {
     let clientMessage = JSON.parse(message);
     clientMessage["id"] = uuidv4();
-    // console.log(
-    //   `User: ${clientMessage.username} said: ${clientMessage.content}`
-    // );
 
     switch (clientMessage.type) {
       case "postMessage":
         clientMessage["type"] = "incomingMessage";
         wss.broadcast(JSON.stringify(clientMessage));
-
         break;
 
       case "postNotification":
@@ -64,15 +55,12 @@ wss.on("connection", ws => {
         break;
 
       default:
-        // show an error in the console if the message type is unknown
-        // client.send(JSON.stringify(incomingMessage));
         throw new Error(
           "Unknown event type " + JSON.stringify(incomingMessage)
         );
     }
 
     console.log("Client connected");
-
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
     wss.broadcast(
       JSON.stringify({
