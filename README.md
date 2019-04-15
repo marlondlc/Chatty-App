@@ -7,7 +7,7 @@ A messaging application that includes all basic functions of a chatroom: creatin
 
 ### Screen Shots
 
-![](https://github.com.....)
+![](https://github.com/marlondlc/Chatty-App/blob/master/ChattyApp.png)
 
 
 ## Installation:
